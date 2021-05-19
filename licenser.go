@@ -19,6 +19,9 @@ type Copyright struct {
 	Copyright string
 }
 
+// copied from:
+// https://gist.github.com/kennwhite/306317d81ab4a885a965e25aa835b8ef
+// TODO: test
 func WordWrap(text string, lineWidth int) string {
 	words := strings.Fields(strings.TrimSpace(text))
 	if len(words) == 0 {
