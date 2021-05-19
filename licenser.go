@@ -4,7 +4,9 @@ import (
 	"embed"
 	"flag"
 	"fmt"
+	"github.com/go-git/go-git/v5"
 	"os"
+	"regexp"
 	"strings"
 	"text/template"
 	"time"
@@ -75,29 +77,46 @@ func ParseProject(s string) (string, string, error) {
 	return ss[0], ss[1], nil
 }
 
+func GetProjectInfo(remoteName string) (string, string, error) {
+	r, err := git.PlainOpen("")
+	remote, err := r.Remote(remoteName)
+	handle(err)
+
+	url := remote.Config().URLs[0]
+
+	re := regexp.MustCompile(`([\w|\/]+)\.git`)
+	matches := re.FindStringSubmatch(url)
+
+	if len(matches) != 2 {
+		panic("Could not parse package name from remote")
+	}
+
+	p := matches[1]
+	return ParseProject(p)
+}
+
 func handle(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
-// TODO: make map of licenses
-
 func main() {
 	currentYear := time.Now().Format("2006")
-	y := flag.String("y", currentYear, "Year(s) that the license should cover")
 
-	p := flag.String("p", "", "Organization/Project to cover")
+	y := flag.String("y", currentYear, "Year(s) that the license should cover")
+	r := flag.String("r", "origin", "Organization/Project to cover")
 
 	flag.Parse()
 
-	org, proj, err := ParseProject(*p)
+	org, proj, err := GetProjectInfo(*r)
 	handle(err)
 
 	contributors := flag.Args()
 
 	c := Copyright{MakeCopyright(contributors, org, proj, *y)}
 
+	// TODO: make map of licenses
 	dat, err := f.ReadFile("templates/MIT.tpl")
 	handle(err)
 

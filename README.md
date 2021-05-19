@@ -13,23 +13,23 @@ go get github.com/nandanrao/licenser
 The command: 
 
 ``` shell
-licenser -p nandanrao/licenser > LICENSE
+licenser > LICENSE
 ```
 
-Results in an MIT license with the following: 
+Results in an MIT license with the following, where the Github URL is created from the git remote information (defaults to "origin" remote): 
 
 ``` text
 Copyright (c) 2021 licenser contributors
 (https://github.com/nandanrao/licenser/graph/contributors)
 ```
 
-While the command: 
+You can add additional copyright holders with positional arguments:
 
 ``` shell
-licenser -p nandanrao/licenser "Nandan Rao"> LICENSE
+licenser "Nandan Rao"> LICENSE
 ```
 
-Results in an MIT license with the following: 
+Which results in an MIT license with the following: 
 
 ``` text
 
@@ -40,5 +40,13 @@ Copyright (c) 2021 Nandan Rao and licenser contributors
 There is also a "year" flag:
 
 ``` shell
-licenser -y 2019-2020 -p nandanrao/licenser > LICENSE
+licenser -y 2019-2020 > LICENSE
 ```
+
+You can pick the git remote name:
+
+
+``` shell
+licenser -r not-the-origin > LICENSE
+```
+
