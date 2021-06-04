@@ -71,7 +71,16 @@ func MakeCopyright(contributors []string, org, project, year string) string {
 	return WordWrap(together, 80)
 }
 
-func ParseProject(s string) (string, string, error) {
+func ParseProject(url string) (string, string, error) {
+	re := regexp.MustCompile(`([^:]+)\.git`)
+	matches := re.FindStringSubmatch(url)
+
+	if len(matches) != 2 {
+		return "", "", fmt.Errorf("Could not parse package name from remote: %s", url)
+	}
+
+	s := matches[1]
+
 	ss := strings.Split(s, "/")
 	if len(ss) != 2 {
 		return "", "", fmt.Errorf("Must pass project in org/project format. Got: %s", s)
@@ -86,16 +95,7 @@ func GetProjectInfo(remoteName string) (string, string, error) {
 	handle(err)
 
 	url := remote.Config().URLs[0]
-
-	re := regexp.MustCompile(`([\w|\/]+)\.git`)
-	matches := re.FindStringSubmatch(url)
-
-	if len(matches) != 2 {
-		panic("Could not parse package name from remote")
-	}
-
-	p := matches[1]
-	return ParseProject(p)
+	return ParseProject(url)
 }
 
 func handle(err error) {

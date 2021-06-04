@@ -21,11 +21,18 @@ func TestMakeContributorListMakesGoodList(t *testing.T) {
 	assert.Equal(t, exp, s)
 }
 
-func TestParseProjectOnGoodString(t *testing.T) {
-	org, proj, e := ParseProject("foo/bar")
+func TestParseProjectOnSimpleString(t *testing.T) {
+	org, proj, e := ParseProject("git@github.com:nandanrao/licenser.git")
 	assert.Nil(t, e)
-	assert.Equal(t, "foo", org)
-	assert.Equal(t, "bar", proj)
+	assert.Equal(t, "nandanrao", org)
+	assert.Equal(t, "licenser", proj)
+}
+
+func TestParseProjectOnHyphenString(t *testing.T) {
+	org, proj, e := ParseProject("git@github.com:foo-bar/baz_qux.git")
+	assert.Nil(t, e)
+	assert.Equal(t, "foo-bar", org)
+	assert.Equal(t, "baz_qux", proj)
 }
 
 func TestParseProjectErrorsOnBadString(t *testing.T) {
